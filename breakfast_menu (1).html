@@ -1,0 +1,146 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Radiant Bloom Café - Breakfast Menu</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f7f1e3; color: #333; }
+    h1, h2, h3, h4 { color: #2c6e49; font-family: 'Georgia', serif; }
+    a { color: #e07a5f; text-decoration: none; margin: 1rem; display: inline-block; }
+    a:hover { text-decoration: underline; }
+    .menu-section { margin: 2rem 0; }
+    .menu-item { margin: 1rem 0; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .banner { max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <h1>The Radiant Bloom Café</h1>
+  <img class="banner" src="images/breakfast-banner.jpg" alt="Breakfast dishes">
+  <h2>Breakfast Menu </h2>
+    <h2>*All Ingredients are Organic*</h2>
+
+  <div class="menu-section">
+    <h3>Mains</h3>
+    <div class="menu-item">
+      <h4>Sunrise Avocado Toast</h4>
+      <p>Organic avocado on artisanal sourdough, topped with microgreens and hemp seeds (vegan). $12</p>
+    </div>
+    <div class="menu-item">
+      <h4>Nomad’s Breakfast Tacos</h4>
+      <p>Two organic egg or tofu tacos, fresh salsa, avocado, and cilantro on non-GMO corn tortillas. $14</p>
+    </div>
+    <div class="menu-item">
+      <h4>Radiant Acai Bowl</h4>
+      <p>Organic acai, mixed berries, banana, granola, and coconut flakes (vegan). $13</p>
+    </div>
+    <div class="menu-item">
+      <h4>Bohemian Oatmeal Glow</h4>
+      <p>Organic oats, almond milk, fresh fruit, chia seeds, and maple syrup (vegan). $10</p>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <h3>Sides</h3>
+    <div class="menu-item">
+      <h4>Morning Glow Potatoes</h4>
+      <p>Organic roasted potatoes with rosemary and smoked paprika. $6</p>
+    </div>
+    <div class="menu-item">
+      <h4>Sunlit Greens</h4>
+      <p>Organic mixed greens with lemon-tahini dressing. $7</p>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <h3>Desserts & Snacks</h3>
+    <div class="menu-item">
+      <h4>Radiant Fruit Cup</h4>
+      <p>Organic seasonal fruits (e.g., berries, mango, kiwi), served with a mint sprig and lime zest. $6</p>
+    </div>
+    <div class="menu-item">
+      <h4>Wanderer’s Fruit Bowl</h4>
+      <p>Organic mixed fruits, coconut yogurt, granola, and chia seeds, drizzled with agave. $9</p>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <h3>Drinks</h3>
+    <div class="menu-item">
+      <h4>Coffee</h4>
+      <p>Nomad’s Artisan Coffee: Organic fair-trade coffee, brewed fresh. $5</p>
+      <p>Desert Dawn Espresso: Organic double-shot espresso with a hint of cardamom. $6</p>
+      <p>Wanderlust Mocha Glow: Organic coffee, cocoa, chice of milk, and agave. $7</p>
+      <p>Trailblazer’s Cold Brew: Organic cold brew, smooth and bold, served over ice. $6</p>
+    </div>
+    <div class="menu-item">
+      <h4>Lemonade</h4>
+      <p>Strawberry Sunset Lemonade: Organic strawberries, fresh lemon, and agave, served chilled. $6</p>
+      <p>Blueberry Horizon Lemonade: Organic blueberries, fresh lemon, and maple syrup, served chilled. $6</p>
+      <p>Lavender Trail Lemonade: Organic lemon, lavender infusion, and honey, served chilled. $7</p>
+      <p>Minted Oasis Lemonade: Organic lemon, fresh mint, and agave, served chilled. $6</p>
+    </div>
+    <div class="menu-item">
+      <h4>Coconut Water</h4>
+      <p>Pure Coconut Wanderer: Fresh organic coconut water with a hint of lime. $7</p>
+      <p>Tropical Trek Coconut: Organic coconut water with pineapple juice. $7</p>
+      <p>Ginger Glow Coconut: Organic coconut water with fresh ginger and lemon. $8</p>
+      <p>Berry Breeze Coconut: Organic coconut water with mixed berry essence. $7</p>
+    </div>
+    <div class="menu-item">
+      <h4>Smoothies</h4>
+      <p>Mango Road Smoothie: Organic mango, banana, almond milk, and chia seeds. $8</p>
+      <p>Green Gypsy Smoothie: Organic spinach, kale, pineapple, and coconut milk. $8</p>
+      <p>Sunrise Bliss Smoothie: Organic pineapple, orange, yogurt, and turmeric. $9</p>
+      <p>Berry Nomad Smoothie: Organic mixed berries, banana, oat milk, and flaxseeds. $8</p>
+    </div>
+  </div>
+
+  <p>
+    <a href="index.html">Home</a> |
+    <a href="menu.html">Dinner Menu</a> |
+    <a href="wanderlust_bites_presentation.html">Our Story</a> |
+    <a href="https://gofundme.com/your-campaign">Donate</a>
+  </p>
+  <p>Follow <a href="https://instagram.com/RadiantBloomCafe">@RadiantBloomCafe</a> #RadiantBloomCafe</p>
+</body>
+</html>

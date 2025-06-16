@@ -1,0 +1,116 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Radiant Bloom Café - Our Story</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #f7f1e3; color: #333; }
+    h1, h2, h3 { color: #2c6e49; font-family: 'Georgia', serif; }
+    a { color: #e07a5f; text-decoration: none; margin: 1rem; display: inline-block; }
+    a:hover { text-decoration: underline; }
+    p, ul { max-width: 600px; margin: 1rem auto; text-align: left; }
+    .section { margin: 2rem 0; }
+    .banner { max-width: 100%; height: auto; }
+    li { margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <h1>The Radiant Bloom Café</h1>
+  <img class="banner" src="images/story-banner.jpg" alt="Family journey">
+  <h2>Our Story</h2>
+
+  <div class="section">
+    <h3>Welcome to The Radiant Bloom Café</h3>
+    <p>The Radiant Bloom Café is a vibrant, organic dining haven where travel-inspired flavors meet sustainable, health-conscious cuisine. Rooted in our family’s love for adventure and wholesome food, we’re bringing the radiant energy of festival feasts to a brick-and-mortar restaurant, glowing with positivity and flavor.</p>
+  </div>
+
+  <div class="section">
+    <h3>Our Journey</h3>
+    <p>As a family of six, we roamed the country with our food trailer, serving organic tacos, smoothie bowls, and coffee at festivals nationwide. From sunlit mornings to starry nights, we shared our passion for sustainable eats with thousands. Now, we’re ready to plant roots with The Radiant Bloom Café—a cozy, radiant space where our travel tales and organic recipes shine. Your support will help us turn this dream into reality!</p>
+  </div>
+
+  <div class="section">
+    <h3>Radiant Menu Highlights</h3>
+    <p>Our menu glows with organic, travel-inspired dishes, featuring an expanded drink selection and vibrant fruit offerings:</p>
+    <ul>
+      <li><strong>Drinks</strong>: Savor 16 radiant beverages, including:
+        <ul>
+          <li><em>Nomad’s Artisan Coffee</em> ($5): Organic fair-trade coffee, brewed fresh.</li>
+          <li><em>Wanderlust Mocha Glow</em> ($7): Organic coffee, cocoa, and almond milk.</li>
+          <li><em>Strawberry Sunset Lemonade</em> ($6): Organic strawberries, lemon, and agave.</li>
+          <li><em>Lavender Trail Lemonade</em> ($7): Organic lemon with lavender and honey.</li>
+          <li><em>Pure Coconut Wanderer</em> ($7): Organic coconut water with lime.</li>
+          <li><em>Ginger Glow Coconut</em> ($8): Organic coconut water with ginger and lemon.</li>
+          <li><em>Mango Road Smoothie</em> ($8): Organic mango, banana, and chia seeds.</li>
+          <li><em>Green Gypsy Smoothie</em> ($8): Organic spinach, kale, and pineapple.</li>
+        </ul>
+      </li>
+      <li><strong>Fruit Offerings</strong>: Refresh with our vibrant desserts and snacks:
+        <ul>
+          <li><em>Radiant Fruit Cup</em> ($6): Organic seasonal fruits with mint and lime zest.</li>
+          <li><em>Wanderer’s Fruit Bowl</em> ($9): Organic fruits, coconut yogurt, granola, and agave.</li>
+        </ul>
+      </li>
+    </ul>
+    <p>Explore our full menus for more organic delights!</p>
+  </div>
+
+  <div class="section">
+    <h3>Join Our Vision</h3>
+    <p>Help us bring The Radiant Bloom Café to life! Your donation will fund our dream of creating a sustainable, radiant dining experience. Visit our GoFundMe to contribute and join the #RadiantBloomCafe movement!</p>
+    <p><a href="https://gofundme.com/your-campaign">Donate Now</a></p>
+  </div>
+
+  <div class="section">
+    <h3>Connect With Us</h3>
+    <p>Follow our journey on Instagram at <a href="https://instagram.com/RadiantBloomCafe">@RadiantBloomCafe</a> and share your support with #RadiantBloomCafe. Let’s glow together!</p>
+  </div>
+
+  <p>
+    <a href="index.html">Home</a> |
+    <a href="menu.html">Dinner Menu</a> |
+    <a href="breakfast_menu.html">Breakfast Menu</a> |
+    <a href="https://gofundme.com/your-campaign">Donate</a>
+  </p>
+</body>
+</html>
